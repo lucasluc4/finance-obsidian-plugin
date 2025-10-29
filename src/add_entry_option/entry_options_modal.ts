@@ -1,5 +1,5 @@
 import {SuggestModal, App} from 'obsidian';
-import entryOptionDescriptionMap from "./entry_modals/entry_option_description_map";
+import { EntryOptionDescriptionMap } from "./entry_modals/entry_option_description_map";
 import { EntryModalMap } from "./entry_modals/entry_option_modal_map";
 import { EntryOptionType } from "./entry_modals/entry_option_type";
 
@@ -7,7 +7,7 @@ class DescriptionModalCorrespondence {
 	type: EntryOptionType;
 	description: string;
 
-	constructor(description: string | undefined, type: EntryOptionType) {
+	constructor(description: string, type: EntryOptionType) {
 		this.description = description || '';
 		this.type = type;
 	}
@@ -22,10 +22,12 @@ export class EntryOptionsModal extends SuggestModal<DescriptionModalCorresponden
 		super(app);
 		this._modalMap = new EntryModalMap(app);
 
+		const descriptionMap = new EntryOptionDescriptionMap();
+
 		const filteredOptions: DescriptionModalCorrespondence[] = [];
 		this._modalMap.getRegisteredTypes().forEach(type => {
 			filteredOptions.push(
-				new DescriptionModalCorrespondence(entryOptionDescriptionMap.get(type), type),
+				new DescriptionModalCorrespondence(descriptionMap.getDescription(type), type),
 			)
 		});
 		this._filteredOptions = filteredOptions;
