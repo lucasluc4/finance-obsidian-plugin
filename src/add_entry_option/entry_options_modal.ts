@@ -1,4 +1,4 @@
-import {SuggestModal, App} from 'obsidian';
+import { SuggestModal, App } from 'obsidian';
 import { EntryOptionDescriptionMap } from "./entry_modals/entry_option_description_map";
 import { EntryModalMap } from "./entry_modals/entry_option_modal_map";
 import { EntryOptionType } from "./entry_modals/entry_option_type";

@@ -1,7 +1,8 @@
-import { EntryOptionType } from "./entry_option_type";
-import { App } from 'obsidian';
+import {EntryOptionType} from "./entry_option_type";
+import {App} from 'obsidian';
 
-import { AddAssetModal } from "src/asset/modals/add_asset_modal";
+import {AddAssetModal} from "src/asset/modals/add_asset_modal";
+import {AddPatrimonyModal} from "../../patrimony/modal/add_patrimony_modal";
 
 export class EntryModalMap {
 	private readonly app: App;
@@ -12,7 +13,8 @@ export class EntryModalMap {
 
 	getRegisteredTypes(): EntryOptionType[] {
 		return [
-			EntryOptionType.AddAsset
+			EntryOptionType.AddAsset,
+			EntryOptionType.AddPatrimony
 		]
 	}
 
@@ -20,6 +22,8 @@ export class EntryModalMap {
 		switch (type) {
 			case EntryOptionType.AddAsset:
 				return new AddAssetModal(this.app);
+			case EntryOptionType.AddPatrimony:
+				return new AddPatrimonyModal(this.app);
 		}
 	}
 }
