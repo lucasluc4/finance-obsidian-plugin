@@ -1,117 +1,30 @@
-import {App, Modal, Setting, Notice, TFile} from 'obsidian';
-import { Asset } from "../../asset/asset";
-import {AssetType} from "../../asset/asset_type";
+import { App, Modal, Setting, Notice } from 'obsidian';
+import { Asset } from "src/asset/asset";
+import { PeriodPickerDecorator } from "src/general/modal_decorator/period_picker_decorator";
+import { AssetPickerDecorator } from "../../general/modal_decorator/asset_picker_decorator";
+import { ValueFieldDecorator } from "../../general/modal_decorator/value_field_decorator";
 
 export class AddPatrimonyModal extends Modal {
 	constructor(app: App) {
 		super(app);
+
 		this.setTitle('Create new Patrimony Entry');
 
-		const today = new Date();
-		const currentMonth = today.getUTCMonth() + 1;
-		const currentYear = today.getUTCFullYear();
-
 		let asset: Asset;
-		let yearInput: string = currentYear.toString();
-		let monthInput: string = currentMonth < 10 ? "0" + currentMonth : currentMonth.toString();
-		let period: string = yearInput + "-" + monthInput;
+		let period: string;
 		let patrimonyValue: number = 0;
 
-		new Setting(this.contentEl)
-			.setName('Year')
-			.addText((text) =>
-				text.setValue(yearInput)
-					.onChange((value) => {
-					const numericInput = value.replace(/\D/g, '');
-					if (numericInput.length > 4) {
-						yearInput = numericInput.slice(0, 4);
-					} else {
-						yearInput = numericInput;
-					}
-					text.setValue(yearInput);
-					period = yearInput + "-" + monthInput;
-				})
-			);
-
-		new Setting(this.contentEl)
-			.setName('Month')
-			.addDropdown((dropdown) =>
-				dropdown
-					.addOption("01", "January")
-					.addOption("02", "February")
-					.addOption("03", "March")
-					.addOption("04", "April")
-					.addOption("05", "May")
-					.addOption("06", "June")
-					.addOption("07", "July")
-					.addOption("08", "August")
-					.addOption("09", "September")
-					.addOption("10", "October")
-					.addOption("11", "November")
-					.addOption("12", "December")
-					.setValue(monthInput)
-					.onChange((value: string) => {
-						monthInput = value;
-						period = yearInput + "-" + monthInput;
-					})
-			);
-
-		const currentAssets: Asset[] = [];
-		const folder = this.app.vault.getFolderByPath("finance/assets");
-		folder?.children.forEach((child) => {
-			if (child instanceof TFile && child.extension === "md") {
-				const assetFile = child as TFile;
-				const frontmatter = this.app.metadataCache.getFileCache(assetFile)?.frontmatter;
-
-				if (frontmatter) {
-					try {
-						const active = frontmatter.Active as boolean;
-						const assetType = frontmatter.Type as AssetType;
-
-						currentAssets.push(new Asset(assetType, assetFile.basename, active));
-					} catch (e) {
-						console.error(e);
-					}
-				}
-			}
+		new PeriodPickerDecorator().include(this, (newPeriod) => {
+			period = newPeriod;
 		});
 
-		new Setting(this.contentEl)
-			.setName('Asset')
-			.addDropdown((dropdown) => {
+		new AssetPickerDecorator().include(this, (newAsset) => {
+			asset = newAsset;
+		});
 
-				currentAssets.forEach((currentAsset) => {
-					if (currentAsset.isActive()) {
-						dropdown.addOption(currentAsset.getName(), currentAsset.getName());
-						if (!asset) {
-							asset = currentAsset;
-							dropdown.setValue(currentAsset.getName());
-						}
-					}
-
-				});
-
-				dropdown
-					.onChange((value: string) => {
-						currentAssets.forEach((currentAsset) => {
-							if (value === currentAsset.getName()) {
-								asset = currentAsset;
-							}
-						})
-					});
-			});
-
-		new Setting(this.contentEl)
-			.setName('Value')
-			.addText((text) =>
-				text.setValue("0.00")
-					.onChange((value) => {
-						const numericInput = Number(value.replace(/\D/g, '')) / 100;
-						const input = numericInput.toFixed(2);
-						text.setValue(input);
-						patrimonyValue = numericInput;
-					})
-			);
+		new ValueFieldDecorator().include(this, (newValue) => {
+			patrimonyValue = newValue;
+		});
 
 		new Setting(this.contentEl)
 			.addButton((btn) =>
