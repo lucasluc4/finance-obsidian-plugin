@@ -1,6 +1,9 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal, Setting } from 'obsidian';
 import { AssetTypeDescriptionMap } from "src/asset/asset_type_description_map";
 import { AssetType } from "src/asset/asset_type";
+import { FinanceFileCreationButtonDecorator } from "../../general/modal_decorator/finance_file_creation_button_decorator";
+import { AssetFileParameter } from "./asset_file_parameter";
+import { AssetFileSetting } from "./asset_file_setting";
 
 export class AddAssetModal extends Modal {
 	constructor(app: App) {
@@ -33,41 +36,11 @@ export class AddAssetModal extends Modal {
 					})
 			);
 
-		new Setting(this.contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText('Create')
-					.setCta()
-					.onClick(async () => {
-						if (!name || !name.length) {
-							new Notice('Name cannot be empty');
-							return;
-						}
+		const getAssetFileParameter = () => {
+			return new AssetFileParameter(type, name);
+		}
 
-						const fileContent = "---\n" +
-							"Type: " + type + "\n" +
-							"Active: true\n" +
-							"---\n";
-
-						const path = "finance/assets";
-						const fileName = name + ".md";
-						const filePath = path + "/" + fileName;
-						try {
-
-							const existingFolder = app.vault.getAbstractFileByPath(path);
-							if (!existingFolder) {
-								await this.app.vault.createFolder(path);
-							}
-
-							const file = await this.app.vault.create(filePath, fileContent);
-							await this.app.workspace.getLeaf(false).openFile(file);
-						} catch (e) {
-							new Notice('An error occurred while creating new asset file. ' +
-								'Check if file already exists.');
-							return;
-						}
-
-						this.close();
-					}));
+		new FinanceFileCreationButtonDecorator<AssetFileParameter>().include(this, getAssetFileParameter,
+			new AssetFileSetting());
 	}
 }
