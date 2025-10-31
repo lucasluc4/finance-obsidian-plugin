@@ -1,7 +1,6 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { EntryOptionsModal } from "./src/plugin_actions/modal/entry_options_modal";
-import { EntryModalMap } from "src/plugin_actions/entry_option_modal_map";
-import { EntryOptionDescriptionMap } from "src/plugin_actions/entry_option_description_map";
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { PluginActionCommandDecorator } from "src/plugin_actions/decorator/plugin_action_command_decorator";
+import { PluginActionButtonDecorator } from "./src/plugin_actions/decorator/plugin_action_button_decorator";
 
 // Remember to rename these classes and interfaces!
 
@@ -19,34 +18,8 @@ export default class FinanceManagerPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('piggy-bank', 'Add finance entry', (evt: MouseEvent) => {
-			new EntryOptionsModal(this.app).open();
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('finance-manager-ribbon-class');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		// const statusBarItemEl = this.addStatusBarItem();
-		// statusBarItemEl.setText('Status Bar Text');
-
-		// This adds a simple command that can be triggered anywhere
-		const entryOptionDescriptionMap = new EntryOptionDescriptionMap();
-		const entryModalMap = new EntryModalMap(this.app);
-		entryModalMap.getRegisteredTypes().forEach(type => {
-			this.addCommand({
-				id: 'cmd-open-modal-' + type,
-				name: entryOptionDescriptionMap.getDescription(type),
-				callback: () => {
-					const modal = entryModalMap.getModal(type);
-					if (modal) {
-						modal.open();
-					} else {
-						new Notice('Command is not properly configured');
-					}
-				}
-			});
-		});
+		new PluginActionButtonDecorator().include(this);
+		new PluginActionCommandDecorator().include(this);
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
@@ -58,7 +31,7 @@ export default class FinanceManagerPlugin extends Plugin {
 		// });
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		// this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {

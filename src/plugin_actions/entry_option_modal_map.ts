@@ -1,8 +1,8 @@
 import {EntryOptionType} from "./entry_option_type";
 import {App} from 'obsidian';
 
-import {AddAssetModal} from "src/asset/modals/add_asset_modal";
-import {AddPatrimonyModal} from "../patrimony/modal/add_patrimony_modal";
+import {AddAssetModal} from "src/asset/modal/add_asset_modal";
+import {AddPatrimonyModal} from "src/patrimony/modal/add_patrimony_modal";
 
 export class EntryModalMap {
 	private readonly app: App;
