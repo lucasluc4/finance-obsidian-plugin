@@ -1,8 +1,11 @@
-import { App, Modal, Setting, Notice } from 'obsidian';
+import { App, Modal } from 'obsidian';
 import { Asset } from "src/asset/asset";
 import { PeriodPickerDecorator } from "src/general/modal_decorator/period_picker_decorator";
-import { AssetPickerDecorator } from "../../general/modal_decorator/asset_picker_decorator";
-import { ValueFieldDecorator } from "../../general/modal_decorator/value_field_decorator";
+import { AssetPickerDecorator } from "src/general/modal_decorator/asset_picker_decorator";
+import { ValueFieldDecorator } from "src/general/modal_decorator/value_field_decorator";
+import { FinanceFileCreationButtonDecorator } from "src/general/modal_decorator/finance_file_creation_button_decorator";
+import { PatrimonyFileParameter } from "./patrimony_file_parameter";
+import { PatrimonyFileSetting } from "./patrimony_file_setting";
 
 export class AddPatrimonyModal extends Modal {
 	constructor(app: App) {
@@ -26,40 +29,10 @@ export class AddPatrimonyModal extends Modal {
 			patrimonyValue = newValue;
 		});
 
-		new Setting(this.contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText('Create')
-					.setCta()
-					.onClick(async () => {
-						if (!asset || !period || !patrimonyValue) {
-							new Notice('All fields are required');
-							return;
-						}
+		const getPatrimonyFileParameter = () => {
+			return new PatrimonyFileParameter(asset, period, patrimonyValue);
+		}
 
-						const fileContent = "---\n" +
-							"Value: " + patrimonyValue.toFixed(2) + "\n" +
-							"---\n";
-
-						const path = "finance/patrimony/" + period;
-						const fileName = asset.getName() + ".md";
-						const filePath = path + "/" + fileName;
-						try {
-
-							const existingFolder = app.vault.getAbstractFileByPath(path);
-							if (!existingFolder) {
-								await this.app.vault.createFolder(path);
-							}
-
-							const file = await this.app.vault.create(filePath, fileContent);
-							await this.app.workspace.getLeaf(false).openFile(file);
-						} catch (e) {
-							new Notice('An error occurred while creating new patrimony file. ' +
-								'Check if file ' + filePath + ' already exists.');
-							return;
-						}
-
-						this.close();
-					}));
+		new FinanceFileCreationButtonDecorator().include(this, getPatrimonyFileParameter, new PatrimonyFileSetting());
 	}
 }
