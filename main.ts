@@ -1,7 +1,7 @@
 import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { EntryOptionsModal } from "./src/add_entry_option/entry_options_modal";
-import { EntryModalMap } from "src/add_entry_option/entry_modals/entry_option_modal_map";
-import { EntryOptionDescriptionMap } from "src/add_entry_option/entry_modals/entry_option_description_map";
+import { EntryOptionsModal } from "./src/plugin_actions/modal/entry_options_modal";
+import { EntryModalMap } from "src/plugin_actions/entry_option_modal_map";
+import { EntryOptionDescriptionMap } from "src/plugin_actions/entry_option_description_map";
 
 // Remember to rename these classes and interfaces!
 
