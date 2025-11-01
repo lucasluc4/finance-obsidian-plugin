@@ -4,6 +4,7 @@ import {App} from 'obsidian';
 import {AddAssetModal} from "src/asset/modal/add_asset_modal";
 import {AddPatrimonyModal} from "src/patrimony/modal/add_patrimony_modal";
 import {AddTransactionModal} from "src/transaction/modal/add_transaction_modal";
+import {AddReserveAccountModal} from "src/reserve_account/modal/add_reserve_account_modal";
 
 export class EntryModalMap {
 	private readonly app: App;
@@ -17,6 +18,7 @@ export class EntryModalMap {
 			EntryOptionType.AddAsset,
 			EntryOptionType.AddPatrimony,
 			EntryOptionType.AddTransaction,
+			EntryOptionType.AddReserveAccount,
 		]
 	}
 
@@ -28,6 +30,8 @@ export class EntryModalMap {
 				return new AddPatrimonyModal(this.app);
 			case EntryOptionType.AddTransaction:
 				return new AddTransactionModal(this.app);
+			case EntryOptionType.AddReserveAccount:
+				return new AddReserveAccountModal(this.app);
 		}
 	}
 }

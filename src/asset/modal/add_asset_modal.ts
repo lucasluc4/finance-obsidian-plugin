@@ -1,7 +1,7 @@
 import { App, Modal, Setting } from 'obsidian';
 import { AssetTypeDescriptionMap } from "src/asset/asset_type_description_map";
 import { AssetType } from "src/asset/asset_type";
-import { FinanceFileCreationButtonDecorator } from "../../general/modal_decorator/finance_file_creation_button_decorator";
+import { FinanceFileCreationButtonDecorator } from "src/general/modal_decorator/finance_file_creation_button_decorator";
 import { AssetFileParameter } from "./asset_file_parameter";
 import { AssetFileSetting } from "./asset_file_setting";
 
