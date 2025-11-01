@@ -26,7 +26,7 @@ export class AddReserveAccountModal extends Modal {
 			.addTextArea((text) => text.onChange(value => description = value));
 
 		const getReserveAccountParameter = () => {
-			return new ReserveAccount(name, goal, description);
+			return new ReserveAccount(name, goal, description, true);
 		}
 
 		new FinanceFileCreationButtonDecorator<ReserveAccount>().include(this, getReserveAccountParameter,

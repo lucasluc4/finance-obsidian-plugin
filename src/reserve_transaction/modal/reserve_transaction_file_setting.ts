@@ -1,0 +1,49 @@
+import { App, Notice } from 'obsidian';
+import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
+import { ReserveTransactionFileParameter } from "./reserve_transaction_file_parameter";
+
+export class ReserveTransactionFileSetting implements FinanceFileSetting<ReserveTransactionFileParameter> {
+
+	private readonly app: App;
+
+	constructor(app: App) {
+		this.app = app;
+	}
+
+	validate(value: ReserveTransactionFileParameter): boolean {
+		if (!value || !value.getValue() || !value.getReserveAccount() || !value.getPeriod() || !value.getType()) {
+			new Notice('All fields are required');
+			return false;
+		}
+		return true;
+	}
+
+	getPath(value: ReserveTransactionFileParameter): string {
+		return "finance/reserve_transaction/" + value.getPeriod();
+	}
+
+	getFileName(value: ReserveTransactionFileParameter): string {
+		let num = 1;
+		while (true) {
+			const fileName = value.getReserveAccount().getName()
+				+ " - " + value.getType().toString()
+				+ " " + num
+				+ ".md";
+			const fullPath = this.getPath(value) + "/" + fileName;
+			const existingFile = this.app.vault.getAbstractFileByPath(fullPath);
+			if (!existingFile) {
+				return fileName;
+			}
+			num++;
+		}
+	}
+
+	getFileContent(value: ReserveTransactionFileParameter): string {
+		return "---\n" +
+			"Reserve Account: " + value.getReserveAccount().getName() + "\n" +
+			"Type: " + value.getType().toString() + "\n" +
+			"Value: " + value.getValue().toFixed(2) + "\n" +
+			"---\n";
+	}
+
+}

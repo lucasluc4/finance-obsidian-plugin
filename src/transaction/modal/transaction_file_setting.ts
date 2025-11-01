@@ -1,7 +1,6 @@
-import { App } from 'obsidian';
+import { App, Notice } from 'obsidian';
 import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
 import { TransactionFileParameter } from "./transaction_file_parameter";
-import { Notice } from "obsidian";
 
 export class TransactionFileSetting implements FinanceFileSetting<TransactionFileParameter> {
 

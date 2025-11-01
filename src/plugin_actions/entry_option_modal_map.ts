@@ -5,6 +5,7 @@ import {AddAssetModal} from "src/asset/modal/add_asset_modal";
 import {AddPatrimonyModal} from "src/patrimony/modal/add_patrimony_modal";
 import {AddTransactionModal} from "src/transaction/modal/add_transaction_modal";
 import {AddReserveAccountModal} from "src/reserve_account/modal/add_reserve_account_modal";
+import {AddReserveTransactionModal} from "../reserve_transaction/modal/add_reserve_transaction_modal";
 
 export class EntryModalMap {
 	private readonly app: App;
@@ -19,6 +20,7 @@ export class EntryModalMap {
 			EntryOptionType.AddPatrimony,
 			EntryOptionType.AddTransaction,
 			EntryOptionType.AddReserveAccount,
+			EntryOptionType.AddReserveTransaction,
 		]
 	}
 
@@ -32,6 +34,8 @@ export class EntryModalMap {
 				return new AddTransactionModal(this.app);
 			case EntryOptionType.AddReserveAccount:
 				return new AddReserveAccountModal(this.app);
+			case EntryOptionType.AddReserveTransaction:
+				return new AddReserveTransactionModal(this.app);
 		}
 	}
 }
