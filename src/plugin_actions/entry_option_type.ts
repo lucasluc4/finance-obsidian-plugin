@@ -3,5 +3,6 @@ export enum EntryOptionType {
 	AddPatrimony = 'ADD_PATRIMONY',
 	AddTransaction = 'ADD_TRANSACTION',
 	AddReserveAccount = 'ADD_RESERVE_ACCOUNT',
-	AddReserveTransaction = 'ADD_RESERVE_TRANSACTION'
+	AddReserveTransaction = 'ADD_RESERVE_TRANSACTION',
+	CreateAccounting = 'CREATE_ACCOUNTING',
 }

@@ -10,6 +10,7 @@ export class EntryOptionDescriptionMap {
 		this.entryOptionDescriptionMap.set(EntryOptionType.AddTransaction, 'Create new Transaction');
 		this.entryOptionDescriptionMap.set(EntryOptionType.AddReserveAccount, 'Create new Reserve Account');
 		this.entryOptionDescriptionMap.set(EntryOptionType.AddReserveTransaction, 'Create new Reserve Transaction');
+		this.entryOptionDescriptionMap.set(EntryOptionType.CreateAccounting, 'Create new Accounting');
 	}
 
 	getDescription(entryOptionType: EntryOptionType): string {
