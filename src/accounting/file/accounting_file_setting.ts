@@ -12,9 +12,10 @@ export class AccountingFileSetting implements FinanceFileSetting<Accounting> {
 			"Total Net Patrimony: " + value.getTotalNetPatrimony() + "\n" +
 			"Total Income: " + value.getTotalIncome() + "\n" +
 			"Total Investment Deposit: " + value.getTotalInvestmentDeposit() + "\n" +
-			"Total Reserve Deposit: " + value.getTotalReserveDeposit() + "\n" +
+			"Total Reserve: " + value.getTotalReserve() + "\n" +
 			"Reserve Diff: " + value.getReserveDiff() + "\n" +
-			"Reserve Balance: " + JSON.stringify(value.getReserveBalance()) + "\n" +
+			"Reserve Balance: \"" +
+				JSON.stringify(value.getReserveBalance()).replace(/"/g, "'") + "\"\n" +
 			"Patrimony Diff: " + value.getPatrimonyDiff() + "\n" +
 			"Financial Patrimony Diff: " + value.getFinancialPatrimonyDiff() + "\n" +
 			"Investment Patrimony Diff: " + value.getInvestmentPatrimonyDiff() + "\n" +
@@ -34,7 +35,7 @@ export class AccountingFileSetting implements FinanceFileSetting<Accounting> {
 	}
 
 	getPath(value: Accounting): string {
-		return "finance/accounting/";
+		return "finance/accounting";
 	}
 
 	validate(value: Accounting): boolean {

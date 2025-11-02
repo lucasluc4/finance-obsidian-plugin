@@ -10,7 +10,7 @@ export class Accounting {
 	private readonly totalNetPatrimony: number;
 	private readonly totalIncome: number;
 	private readonly totalInvestmentDeposit: number;
-	private readonly totalReserveDeposit: number;
+	private readonly totalReserve: number;
 	private readonly reserveDiff: number;
 	private readonly reserveBalance: ReserveBalance[];
 	private readonly patrimonyDiff: number;
@@ -34,7 +34,7 @@ export class Accounting {
 				totalNetPatrimony: number,
 				totalIncome: number,
 				totalInvestmentDeposit: number,
-				totalReserveDeposit: number,
+				totalReserve: number,
 				reserveDiff: number,
 				reserveBalance: ReserveBalance[],
 				patrimonyDiff: number,
@@ -57,7 +57,7 @@ export class Accounting {
 		this.totalNetPatrimony = totalNetPatrimony;
 		this.totalIncome = totalIncome;
 		this.totalInvestmentDeposit = totalInvestmentDeposit;
-		this.totalReserveDeposit = totalReserveDeposit;
+		this.totalReserve = totalReserve;
 		this.reserveDiff = reserveDiff;
 		this.reserveBalance = reserveBalance;
 		this.patrimonyDiff = patrimonyDiff;
@@ -109,8 +109,8 @@ export class Accounting {
 		return this.totalInvestmentDeposit;
 	}
 
-	getTotalReserveDeposit() {
-		return this.totalReserveDeposit;
+	getTotalReserve() {
+		return this.totalReserve;
 	}
 
 	getReserveDiff() {

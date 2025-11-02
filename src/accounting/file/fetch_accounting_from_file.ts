@@ -2,6 +2,8 @@ import {App, TFile} from "obsidian";
 import { Accounting } from "../accounting";
 import {ReserveBalance} from "../reserve_balance";
 import {AssetType} from "../../asset/asset_type";
+import {ReserveTransaction} from "../../reserve_transaction/reserve_transaction";
+import {ReserveTransactionType} from "../../reserve_transaction/reserve_transaction_type";
 
 export class PatrimonyResult {
 	private readonly totalRealEstatePatrimony: number;
@@ -55,9 +57,9 @@ export class FetchAccountingFromFile {
 			frontmatter["Total Net Patrimony"] as number,
 			frontmatter["Total Income"] as number,
 			frontmatter["Total Investment Deposit"] as number,
-			frontmatter["Total Reserve Deposit"] as number,
+			frontmatter["Total Reserve"] as number,
 			frontmatter["Reserve Diff"] as number,
-			JSON.parse(frontmatter["Reserve Balance"]) as ReserveBalance[],
+			JSON.parse(frontmatter["Reserve Balance"].replace(/'/g, "\"")) as ReserveBalance[],
 			frontmatter["Patrimony Diff"] as number,
 			frontmatter["Financial Patrimony Diff"] as number,
 			frontmatter["Investment Patrimony Diff"] as number,
@@ -113,5 +115,34 @@ export class FetchAccountingFromFile {
 		}
 
 		return new PatrimonyResult(totalRealEstatePatrimony, totalDepositPatrimony, totalInvestmentPatrimony);
+	}
+
+	fetchReserveTransactions(period: string): Map<string, number> {
+		const map = new Map<string, number>();
+
+		const folder = this.app.vault.getFolderByPath("finance/reserve_transaction/" + period);
+		if (folder) {
+			folder.children.forEach((child) => {
+				if (child instanceof TFile && child.extension === "md") {
+					const transactionFile = child as TFile;
+
+					const transactionFrontmatter = this.app.metadataCache.getFileCache(transactionFile)?.frontmatter;
+					if (transactionFrontmatter) {
+						const value = transactionFrontmatter.Type === ReserveTransactionType.Withdraw ?
+							(transactionFrontmatter.Value * (-1)) : transactionFrontmatter.Value ;
+
+						const reserveAccountName = transactionFrontmatter["Reserve Account"];
+
+						if (map.has(reserveAccountName)) {
+							map.set(reserveAccountName, map.get(reserveAccountName) + value);
+						} else {
+							map.set(reserveAccountName, value);
+						}
+					}
+				}
+			});
+		}
+
+		return map;
 	}
 }

@@ -1,6 +1,7 @@
 import {App} from "obsidian";
 import {Accounting} from "./accounting";
 import {FetchAccountingFromFile} from "./file/fetch_accounting_from_file";
+import {ReserveBalance} from "./reserve_balance";
 
 export class AccountingCalculator {
 	private readonly app: App;
@@ -14,38 +15,52 @@ export class AccountingCalculator {
 		const fetchAccounting = new FetchAccountingFromFile(this.app);
 
 		const lastPeriodAccounting = fetchAccounting.fetchAccounting(this.lessOneMonth(period));
-		const lastNetPatrimony = lastPeriodAccounting ? lastPeriodAccounting.getTotalNetPatrimony() : 0;
-		const lastDepositPatrimony = lastPeriodAccounting ? lastPeriodAccounting.getDepositFinancialPatrimony() : 0;
-		const lastInvestmentPatrimony = lastPeriodAccounting ?
-			lastPeriodAccounting.getInvestmentFinancialPatrimony() : 0;
-		const lastFinancialPatrimony = lastPeriodAccounting ? lastPeriodAccounting.getFinancialPatrimony() : 0;
-		const lastRealEstatePatrimony = lastPeriodAccounting ? lastPeriodAccounting.getRealEstatePatrimony() : 0;
+
+		const reserveTransactions = fetchAccounting.fetchReserveTransactions(period);
+		const reserveDiff = this.calculateReserveDiff(reserveTransactions);
+		const reserveBalance = this.calculateReserveBalance(reserveTransactions, lastPeriodAccounting);
+		const totalReserve = lastPeriodAccounting ?
+			reserveDiff + lastPeriodAccounting.getTotalReserve() : reserveDiff
 
 		const periodPatrimony = fetchAccounting.fetchPatrimony(period);
 
-		const totalFinancialPatrimony = periodPatrimony.getTotalDepositPatrimony()
-			+ periodPatrimony.getTotalInvestmentPatrimony();
+		const totalDepositPatrimony = periodPatrimony.getTotalDepositPatrimony() - totalReserve;
+		const totalInvestmentPatrimony = periodPatrimony.getTotalInvestmentPatrimony();
+		const totalRealEstatePatrimony = periodPatrimony.getTotalRealEstatePatrimony();
 
-		const totalPatrimony = totalFinancialPatrimony + periodPatrimony.getTotalRealEstatePatrimony();
+		const totalFinancialPatrimony = totalDepositPatrimony + totalInvestmentPatrimony;
+		const totalNetPatrimony = totalFinancialPatrimony + totalRealEstatePatrimony;
+		const totalPatrimony = totalNetPatrimony + totalReserve;
+
+		const patrimonyDiff = lastPeriodAccounting ?
+			totalNetPatrimony - lastPeriodAccounting.getTotalNetPatrimony() : 0;
+		const financialPatrimonyDiff = lastPeriodAccounting ?
+			totalFinancialPatrimony - lastPeriodAccounting.getFinancialPatrimony() : 0;
+		const investmentPatrimonyDiff = lastPeriodAccounting ?
+			totalInvestmentPatrimony - lastPeriodAccounting.getInvestmentFinancialPatrimony() : 0;
+		const depositFinancialPatrimonyDiff = lastPeriodAccounting ?
+			totalDepositPatrimony - lastPeriodAccounting.getDepositFinancialPatrimony() : 0;
+		const realEstatePatrimonyDiff = lastPeriodAccounting ?
+			totalRealEstatePatrimony - lastPeriodAccounting.getRealEstatePatrimony() : 0;
 
 		return new Accounting(
 			period,
-			periodPatrimony.getTotalRealEstatePatrimony(),
+			totalRealEstatePatrimony,
 			totalFinancialPatrimony,
-			periodPatrimony.getTotalInvestmentPatrimony(),
-			periodPatrimony.getTotalDepositPatrimony(),
+			totalInvestmentPatrimony,
+			totalDepositPatrimony,
 			totalPatrimony,
-			totalPatrimony,
+			totalNetPatrimony,
 			0,
 			0,
-			0,
-			0,
-			[],
-			totalPatrimony - lastNetPatrimony,
-			totalFinancialPatrimony - lastFinancialPatrimony,
-			periodPatrimony.getTotalInvestmentPatrimony() - lastInvestmentPatrimony,
-			periodPatrimony.getTotalDepositPatrimony() - lastDepositPatrimony,
-			periodPatrimony.getTotalInvestmentPatrimony() - lastRealEstatePatrimony,
+			totalReserve,
+			reserveDiff,
+			reserveBalance,
+			patrimonyDiff,
+			financialPatrimonyDiff,
+			investmentPatrimonyDiff,
+			depositFinancialPatrimonyDiff,
+			realEstatePatrimonyDiff,
 			0,
 			0,
 			0,
@@ -68,5 +83,38 @@ export class AccountingCalculator {
 		}
 
 		return `${year}-${month-1}`;
+	}
+
+	private calculateReserveDiff(reserveTransactions: Map<string, number>): number {
+		let reserveDiff = 0;
+
+		reserveTransactions.forEach((value, key) => {
+			reserveDiff += value;
+		});
+
+		return reserveDiff;
+	}
+
+	private calculateReserveBalance(reserveTransactions: Map<string, number>, lastPeriodAccounting: Accounting | null) {
+		const reserveBalance = new Array<ReserveBalance>();
+		const alreadyCalculatedAccount = new Map<string, boolean>();
+
+		if (lastPeriodAccounting && lastPeriodAccounting.getReserveBalance()) {
+			lastPeriodAccounting.getReserveBalance().forEach((item) => {
+				const balance = item as ReserveBalance;
+				const transactionDiff = reserveTransactions.get(balance.reserveAccountName) || 0;
+				reserveBalance.push(new ReserveBalance(balance.reserveAccountName,
+					balance.balance + transactionDiff));
+				alreadyCalculatedAccount.set(balance.reserveAccountName, true);
+			});
+		}
+
+		reserveTransactions.forEach((value, key) => {
+			if (!alreadyCalculatedAccount.has(key)) {
+				reserveBalance.push(new ReserveBalance(key, value));
+			}
+		});
+
+		return reserveBalance;
 	}
 }
