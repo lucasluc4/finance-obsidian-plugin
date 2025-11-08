@@ -19,7 +19,7 @@ export class AddReserveAccountModal extends Modal {
 				text.onChange(value => name = value);
 			});
 
-		new ValueFieldDecorator().include(this, value => goal = value, "Goal");
+		new ValueFieldDecorator().include(this, "Goal", value => goal = value);
 
 		new Setting(this.contentEl)
 			.setName("Description (optional)")

@@ -67,7 +67,7 @@ export class AddReserveTransactionModal extends Modal {
 					});
 			});
 
-		new ValueFieldDecorator().include(this, newValue => transactionValue = newValue);
+		new ValueFieldDecorator().include(this, "Value", newValue => transactionValue = newValue);
 
 		type = ReserveTransactionType.Deposit;
 

@@ -25,7 +25,7 @@ export class AddPatrimonyModal extends Modal {
 			asset = newAsset;
 		});
 
-		new ValueFieldDecorator().include(this, (newValue) => {
+		new ValueFieldDecorator().include(this, "Value", (newValue) => {
 			patrimonyValue = newValue;
 		});
 
