@@ -6,5 +6,5 @@
 	"description": "Plugin for a personal financial management framework.",
 	"author": "Lucas Maia",
 	"authorUrl": "https://lucasmaia.dev",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }
