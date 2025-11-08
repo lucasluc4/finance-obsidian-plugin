@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { Notice, normalizePath } from "obsidian";
 import { PatrimonyFileParameter } from "./patrimony_file_parameter";
 import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
 
@@ -13,7 +13,7 @@ export class PatrimonyFileSetting implements FinanceFileSetting<PatrimonyFilePar
 	}
 
 	getPath(value: PatrimonyFileParameter): string {
-		return "finance/patrimony/" + value.getPeriod();
+		return normalizePath("finance/patrimony/" + value.getPeriod().replace("-", "/"));
 	}
 
 	getFileName(value: PatrimonyFileParameter): string {

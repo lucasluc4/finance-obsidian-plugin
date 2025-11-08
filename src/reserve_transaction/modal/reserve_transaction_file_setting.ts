@@ -1,4 +1,4 @@
-import { App, Notice } from 'obsidian';
+import { App, Notice, normalizePath } from 'obsidian';
 import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
 import { ReserveTransactionFileParameter } from "./reserve_transaction_file_parameter";
 
@@ -19,7 +19,7 @@ export class ReserveTransactionFileSetting implements FinanceFileSetting<Reserve
 	}
 
 	getPath(value: ReserveTransactionFileParameter): string {
-		return "finance/reserve_transaction/" + value.getPeriod();
+		return normalizePath("finance/reserve_transaction/" + value.getPeriod().replace("-", "/"));
 	}
 
 	getFileName(value: ReserveTransactionFileParameter): string {

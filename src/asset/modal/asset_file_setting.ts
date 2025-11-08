@@ -1,4 +1,4 @@
-import { Notice } from "obsidian";
+import { Notice, normalizePath } from "obsidian";
 import { FinanceFileSetting } from "../../general/modal_decorator/file/finance_file_setting";
 import { AssetFileParameter } from "./asset_file_parameter";
 
@@ -16,7 +16,7 @@ export class AssetFileSetting implements FinanceFileSetting<AssetFileParameter> 
 	}
 
 	getPath(value: AssetFileParameter): string {
-		return "finance/assets";
+		return normalizePath("finance/assets");
 	}
 
 	validate(value: AssetFileParameter): boolean {

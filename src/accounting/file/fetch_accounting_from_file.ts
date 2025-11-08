@@ -1,4 +1,4 @@
-import {App, TFile} from "obsidian";
+import {App, TFile, normalizePath} from "obsidian";
 import { Accounting } from "../accounting";
 import {ReserveBalance} from "../reserve_balance";
 import {AssetType} from "../../asset/asset_type";
@@ -55,7 +55,7 @@ export class FetchAccountingFromFile {
 	}
 
 	fetchAccounting(period: string): Accounting | null {
-		const file = this.app.vault.getFileByPath("finance/accounting/" + period + ".md");
+		const file = this.app.vault.getFileByPath(normalizePath("finance/accounting/" + period + ".md"));
 		if (!file) {
 			return null;
 		}
@@ -93,7 +93,8 @@ export class FetchAccountingFromFile {
 	}
 
 	fetchPatrimony(period: string): PatrimonyResult {
-		const folder = this.app.vault.getFolderByPath("finance/patrimony/" + period);
+		const folder = this.app.vault.getFolderByPath(
+			normalizePath("finance/patrimony/" + period.replace("-", "/")));
 
 		let totalRealEstatePatrimony = 0;
 		let totalDepositPatrimony = 0;
@@ -110,7 +111,8 @@ export class FetchAccountingFromFile {
 						const patrimonyValue = patrimonyFrontmatter.Value;
 						let assetType = AssetType.DepositAccount;
 
-						const assetFile = this.app.vault.getFileByPath("finance/assets/" + patrimonyFile.basename + ".md");
+						const assetFile = this.app.vault.getFileByPath(
+							normalizePath("finance/assets/" + patrimonyFile.basename + ".md"));
 						if (assetFile) {
 							const assetFrontmatter = this.app.metadataCache.getFileCache(assetFile)?.frontmatter;
 							if (assetFrontmatter) {
@@ -138,7 +140,8 @@ export class FetchAccountingFromFile {
 	fetchReserveTransactions(period: string): Map<string, number> {
 		const map = new Map<string, number>();
 
-		const folder = this.app.vault.getFolderByPath("finance/reserve_transaction/" + period);
+		const folder = this.app.vault.getFolderByPath(
+			normalizePath("finance/reserve_transaction/" + period.replace("-", "/")));
 		if (folder) {
 			folder.children.forEach((child) => {
 				if (child instanceof TFile && child.extension === "md") {
@@ -168,7 +171,8 @@ export class FetchAccountingFromFile {
 		let totalInvestmentDeposit = 0;
 		let totalIncome = 0;
 
-		const folder = this.app.vault.getFolderByPath("finance/transaction/" + period);
+		const folder = this.app.vault.getFolderByPath(
+			normalizePath("finance/transaction/" + period.replace("-", "/")));
 		if (folder) {
 			folder.children.forEach((child) => {
 				if (child instanceof TFile && child.extension === "md") {
@@ -184,7 +188,8 @@ export class FetchAccountingFromFile {
 							let assetType = AssetType.DepositAccount;
 
 							const assetName = transactionFrontmatter.Asset as string;
-							const assetFile = this.app.vault.getFileByPath("finance/assets/" + assetName + ".md");
+							const assetFile = this.app.vault.getFileByPath(
+								normalizePath("finance/assets/" + assetName + ".md"));
 							if (assetFile) {
 								const assetFrontmatter = this.app.metadataCache.getFileCache(assetFile)?.frontmatter;
 								if (assetFrontmatter) {

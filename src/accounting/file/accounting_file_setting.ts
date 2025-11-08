@@ -1,3 +1,4 @@
+import {normalizePath} from "obsidian";
 import {FinanceFileSetting} from "../../general/modal_decorator/file/finance_file_setting";
 import {Accounting} from "../accounting";
 
@@ -35,7 +36,7 @@ export class AccountingFileSetting implements FinanceFileSetting<Accounting> {
 	}
 
 	getPath(value: Accounting): string {
-		return "finance/accounting";
+		return normalizePath("finance/accounting");
 	}
 
 	validate(value: Accounting): boolean {

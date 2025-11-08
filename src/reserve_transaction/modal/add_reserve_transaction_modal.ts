@@ -1,4 +1,4 @@
-import {App, Modal, Setting, TFile} from 'obsidian';
+import {App, Modal, normalizePath, Setting, TFile} from 'obsidian';
 import {ReserveAccount} from "src/reserve_account/reserve_account";
 import {ReserveTransactionType} from "../reserve_transaction_type";
 import {PeriodPickerDecorator} from "src/general/modal_decorator/period_picker_decorator";
@@ -26,7 +26,7 @@ export class AddReserveTransactionModal extends Modal {
 		const defaultReserveAccount: ReserveAccount = new ReserveAccount("Default", 0, "Default reserve account", true);
 		currentAccounts.push(defaultReserveAccount);
 
-		const folder = this.app.vault.getFolderByPath("finance/reserve_accounts");
+		const folder = this.app.vault.getFolderByPath(normalizePath("finance/reserve_accounts"));
 		folder?.children.forEach((child) => {
 			if (child instanceof TFile && child.extension === "md") {
 				const assetFile = child as TFile;

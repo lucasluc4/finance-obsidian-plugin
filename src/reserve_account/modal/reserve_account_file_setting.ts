@@ -1,4 +1,4 @@
-import { Notice } from 'obsidian';
+import { Notice, normalizePath } from 'obsidian';
 import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
 import { ReserveAccount } from "../reserve_account";
 
@@ -17,7 +17,7 @@ export class ReserveAccountFileSettings implements FinanceFileSetting<ReserveAcc
 	}
 
 	getPath(value: ReserveAccount): string {
-		return "finance/reserve_accounts";
+		return normalizePath("finance/reserve_accounts");
 	}
 
 	getFileContent(value: ReserveAccount): string {

@@ -1,4 +1,4 @@
-import { Modal, Setting, TFile } from 'obsidian';
+import { Modal, Setting, TFile, normalizePath } from 'obsidian';
 import { Asset } from "src/asset/asset";
 import { AssetType } from "src/asset/asset_type";
 
@@ -6,7 +6,7 @@ export class AssetPickerDecorator {
 
 	include(modal: Modal, assetSetCallback: (asset: Asset) => void) {
 		const currentAssets: Asset[] = [];
-		const folder = modal.app.vault.getFolderByPath("finance/assets");
+		const folder = modal.app.vault.getFolderByPath(normalizePath("finance/assets"));
 		folder?.children.forEach((child) => {
 			if (child instanceof TFile && child.extension === "md") {
 				const assetFile = child as TFile;

@@ -1,4 +1,4 @@
-import { App, Notice } from 'obsidian';
+import { App, Notice, normalizePath } from 'obsidian';
 import { FinanceFileSetting } from "src/general/modal_decorator/file/finance_file_setting";
 import { TransactionFileParameter } from "./transaction_file_parameter";
 
@@ -36,7 +36,7 @@ export class TransactionFileSetting implements FinanceFileSetting<TransactionFil
 	}
 
 	getPath(value: TransactionFileParameter): string {
-		return "finance/transaction/" + value.getPeriod();
+		return normalizePath("finance/transaction/" + value.getPeriod().replace("-", "/"));
 	}
 
 	validate(value: TransactionFileParameter): boolean {
