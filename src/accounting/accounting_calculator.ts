@@ -43,6 +43,19 @@ export class AccountingCalculator {
 		const realEstatePatrimonyDiff = lastPeriodAccounting ?
 			totalRealEstatePatrimony - lastPeriodAccounting.getRealEstatePatrimony() : 0;
 
+		const transactionResult = fetchAccounting.fetchTransactions(period);
+		const income = transactionResult.getIncome();
+		const investmentDeposit = transactionResult.getInvestmentDeposit();
+
+		const investmentInterest = lastPeriodAccounting ? investmentPatrimonyDiff - investmentDeposit : 0;
+		const percentageInvestmentInterest = totalInvestmentPatrimony ?
+			investmentInterest / totalInvestmentPatrimony : 0;
+
+		const netEconomy = patrimonyDiff - investmentInterest;
+		const percentageNetEconomy = income ? netEconomy / income : 0;
+		const financialNetEconomy = financialPatrimonyDiff - investmentInterest;
+		const percentageFinancialNetEconomy = income ?  financialNetEconomy / income : 0;
+
 		return new Accounting(
 			period,
 			totalRealEstatePatrimony,
@@ -51,8 +64,8 @@ export class AccountingCalculator {
 			totalDepositPatrimony,
 			totalPatrimony,
 			totalNetPatrimony,
-			0,
-			0,
+			income,
+			investmentDeposit,
 			totalReserve,
 			reserveDiff,
 			reserveBalance,
@@ -61,12 +74,12 @@ export class AccountingCalculator {
 			investmentPatrimonyDiff,
 			depositFinancialPatrimonyDiff,
 			realEstatePatrimonyDiff,
-			0,
-			0,
-			0,
-			0,
-			0,
-			0
+			investmentInterest,
+			percentageInvestmentInterest,
+			netEconomy,
+			percentageNetEconomy,
+			financialNetEconomy,
+			percentageFinancialNetEconomy
 		)
 	}
 

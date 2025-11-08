@@ -2,8 +2,8 @@ import {App, TFile} from "obsidian";
 import { Accounting } from "../accounting";
 import {ReserveBalance} from "../reserve_balance";
 import {AssetType} from "../../asset/asset_type";
-import {ReserveTransaction} from "../../reserve_transaction/reserve_transaction";
 import {ReserveTransactionType} from "../../reserve_transaction/reserve_transaction_type";
+import {TransactionType} from "../../transaction/transaction_type";
 
 export class PatrimonyResult {
 	private readonly totalRealEstatePatrimony: number;
@@ -26,6 +26,24 @@ export class PatrimonyResult {
 
 	getTotalInvestmentPatrimony() {
 		return this.totalInvestmentPatrimony;
+	}
+}
+
+export class TransactionResult {
+	private readonly investmentDeposit: number;
+	private readonly income: number;
+
+	constructor(investmentDeposit: number, income: number) {
+		this.investmentDeposit = investmentDeposit;
+		this.income = income;
+	}
+
+	getInvestmentDeposit() {
+		return this.investmentDeposit;
+	}
+
+	getIncome() {
+		return this.income;
 	}
 }
 
@@ -144,5 +162,54 @@ export class FetchAccountingFromFile {
 		}
 
 		return map;
+	}
+
+	fetchTransactions(period: string): TransactionResult {
+		let totalInvestmentDeposit = 0;
+		let totalIncome = 0;
+
+		const folder = this.app.vault.getFolderByPath("finance/transaction/" + period);
+		if (folder) {
+			folder.children.forEach((child) => {
+				if (child instanceof TFile && child.extension === "md") {
+					const transactionFile = child as TFile;
+
+					const transactionFrontmatter = this.app.metadataCache.getFileCache(transactionFile)?.frontmatter;
+					if (transactionFrontmatter) {
+
+						if (transactionFrontmatter.Type === TransactionType.Salary
+							|| transactionFrontmatter.Type === TransactionType.Bonus) {
+							totalIncome += transactionFrontmatter.Value as number;
+						} else {
+							let assetType = AssetType.DepositAccount;
+
+							const assetName = transactionFrontmatter.Asset as string;
+							const assetFile = this.app.vault.getFileByPath("finance/assets/" + assetName + ".md");
+							if (assetFile) {
+								const assetFrontmatter = this.app.metadataCache.getFileCache(assetFile)?.frontmatter;
+								if (assetFrontmatter) {
+									const fileAssetType = assetFrontmatter.Type as AssetType;
+									if (fileAssetType) {
+										assetType = fileAssetType;
+									}
+								}
+							}
+
+							if (assetType === AssetType.InvestmentAccount) {
+								if (transactionFrontmatter.Type === TransactionType.Deposit) {
+									totalInvestmentDeposit += transactionFrontmatter.Value;
+								}
+
+								if (transactionFrontmatter.Type === TransactionType.Withdraw) {
+									totalInvestmentDeposit -= transactionFrontmatter.Value
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+
+		return new TransactionResult(totalInvestmentDeposit, totalIncome);
 	}
 }
