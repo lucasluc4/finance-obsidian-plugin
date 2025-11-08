@@ -2,9 +2,9 @@ import { Modal, Setting } from 'obsidian';
 
 export class ValueFieldDecorator {
 
-	include(modal: Modal, valueSetCallback: (value: number) => void) {
+	include(modal: Modal, valueSetCallback: (value: number) => void, alternateFieldValue: string) {
 		new Setting(modal.contentEl)
-			.setName('Value')
+			.setName(alternateFieldValue || 'Value')
 			.addText((text) =>
 				text.setValue("0.00")
 					.onChange((value) => {
@@ -15,4 +15,5 @@ export class ValueFieldDecorator {
 					})
 			);
 	}
+
 }

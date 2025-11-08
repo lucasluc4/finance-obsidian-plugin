@@ -5,11 +5,11 @@ import { PluginActionButtonDecorator } from "./src/plugin_actions/decorator/plug
 // Remember to rename these classes and interfaces!
 
 interface FinanceManagerPluginSettings {
-	mySetting: string;
+	language: string;
 }
 
 const DEFAULT_SETTINGS: FinanceManagerPluginSettings = {
-	mySetting: 'default'
+	language: 'en-US'
 }
 
 export default class FinanceManagerPlugin extends Plugin {
@@ -61,14 +61,15 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+			.setName('Language')
+			.setDesc("This sets the language in Modals and Commands but won't change field names in generated files or even folder names")
+			.addDropdown(dropdown => dropdown
+				.addOption("en-US", "en-US")
+				.setValue(this.plugin.settings.language)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.language = value;
 					await this.plugin.saveSettings();
-				}));
+				})
+			);
 	}
 }
